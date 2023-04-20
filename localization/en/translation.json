@@ -1,0 +1,33 @@
+{
+  "home": "Home",
+  "settings": "Settings",
+  "requiredValue": "Value  required",
+  "letsignin": "Let's sign in",
+  "welcome": "Welcome !",
+  "mobilePhone": "Mobile phone",
+  "password": "Password",
+  "yourpassword": "Your password",
+  "yourmobile": "Your mobile phone",
+  "logout": "Log out",
+  "signoutConfirmMessage": "Do you really want to log out ?",
+  "cancel": "Cancel",
+  "no": "No",
+  "yes": "Yes",
+  "payment": "Payment",
+  "Error": "Error",
+  "nfcnotsupported": "Your device does not support nfc cards reading",
+  "close": "Close",
+  "nfcnotactivated": "Nfc reading not activated",
+  "activatenfcReading": "Active",
+  "invalidamount": "Invalid amount, let enter a valid amount",
+  "totalamount": "Total Amount",
+  "presentyourcard": "Present your card to pay",
+  "processing1": "Processing ...",
+  "activepaiementAccount": "Active payment account",
+  "language": "Language",
+  "changelanguage": "Change de language",
+  "validate" : "Validate"
+
+
+
+}

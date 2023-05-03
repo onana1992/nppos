@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as Animatable from 'react-native-animatable';
 import {
 	View, StyleSheet, Keyboard, TouchableOpacity, Share,
 	Dimensions, RefreshControl,
@@ -6,37 +7,33 @@ import {
 	Alert, Platform, SafeAreaView, Text, ActivityIndicator, TextInput
 } from 'react-native';
 
+
 /*import { Card, ListItem, Button, Header } from 'react-native-elements';*/
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ApplicationStyles, Metrics, Colors } from '../Themes';
+import {Metrics, Colors } from '../Themes';
 import { useTranslation } from 'react-i18next';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Feather from 'react-native-vector-icons/Feather';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { connect } from 'react-redux';
-import Modal from "react-native-modal";
 import NfcManager, { NfcEvents, NfcTech } from 'react-native-nfc-manager';
 import { RSA } from 'react-native-rsa-native';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { lauchTransaction } from '../Services/services';
+
 
 function PaiementValidationScreen() {
 
+	
 	const state = useSelector<any, any>(state => state.userReducer);
 	const [saveAccount, setSaveAccount] = useState(state.pro_account);
 	const [user, setUser] = useState(state.user.user);
 	const { amount } = useRoute<any>().params;
 	const { t } = useTranslation();
-
-	console.log(saveAccount.numCompte.slice(0, 9))
-	//console.log(user)
+	const navigation = useNavigation();
 
 	
+
 	const { width, height } = Dimensions.get('window');
 	const [profilReceiver, setProfilReceiver] = useState(null);
 	const [enabled, setEnabled] = React.useState(null);
@@ -46,14 +43,14 @@ function PaiementValidationScreen() {
 	const [succeed, setSucceed] = useState(false);
 	const [failed, setFailed] = useState(false);
 	const [nip, setNip] = useState("");
+	const [cashierPhone, setCashierPhone] = useState(user.telephone);
 	const [failure, setFailure] = useState("failure1");
 	const [authRequired, setAuthRequired] = useState(false);
 	const baseUrl = 'https://nanoapp-api.herokuapp.com/api';
 	const [senderAccount, setSenderAccount] = useState("");
 
+
 	
-
-
 	async function readTag() {
 
 		let blockData = [];
@@ -81,13 +78,15 @@ function PaiementValidationScreen() {
 					blockAccountData.push(respAccountBytes[k])
 				}
 
-				blockAccountData = blockAccountData.slice(0, 11);
+				console.log(blockAccountData);
+
+				blockAccountData = blockAccountData.slice(0, 14);
 
 				numCompteEnc = blockAccountData.reduce((acc, c) => {
 					return acc + c;
 				}, '');
 
-				numCompte = numCompteEnc.slice(0, 9) + "-" + numCompteEnc.slice(9, 11)
+				numCompte = numCompteEnc.slice(0, 12)+ "-" + numCompteEnc.slice(12, 14)
 
 				setSenderAccount(numCompte);
 				console.log("le numéro de compte ", numCompte);
@@ -96,10 +95,10 @@ function PaiementValidationScreen() {
 
 			/**********************************extraction de la signature *************************/
 			var i = 0
-			var j = 8
+			var j = 9
 
 			//lecture de 36 block au lieu de 33 
-			while (i <= 36 / 4) {
+			while (i < 36 / 4) {// 9 tours donc 144 O
 
 				const respBytes = await NfcManager.nfcAHandler.transceive([0x30, j]);
 				if (respBytes.length !== 16) {
@@ -118,7 +117,7 @@ function PaiementValidationScreen() {
 			}
 
 			var m = 0;
-			while (m < 30) {
+			while (m < 14) {
 				blockData.pop();
 				m++;
 			}
@@ -147,18 +146,19 @@ function PaiementValidationScreen() {
 
 					// clé publique  trouvé
 					pk = response.data.data.parametre.publickey;
+					console.log("num de compte encoder",numCompteEnc);
 					data = response.data.data.parametre.uid + numCompteEnc;
 					console.log("la clé public est", pk);
 					console.log(data);
 
 					//********************************verification de la signature ***********************/
-
+					console.log("taille signature", signature.length);
 					let result = await RSA.verify(signature, data, pk)
 					
 
 
 					if (!result) {
-						console.log("La signature n'est vérifier");
+						console.log("La signature n'est pas  vérifier");
 
 						// cas 1 : la signature n'est pas vérifier
 						setInprocess(false);
@@ -201,7 +201,6 @@ function PaiementValidationScreen() {
 			}
 
 
-
 		} catch (ex) {
 			console.log(ex);
 		} finally {
@@ -214,88 +213,82 @@ function PaiementValidationScreen() {
 
 	const send = (numCompteEmetteur:string, nip:string) => {
 
-		let senderPhone = numCompteEmetteur.slice(0,9);
+		let senderPhone = numCompteEmetteur.slice(0,12);
 		let senderAccount = numCompteEmetteur;
-		console.log("num émetteur ", senderPhone);
-		console.log("compte recepteur ", senderAccount);
+		/*console.log("num émetteur ", senderPhone);
+		console.log("compte émetteur ", senderAccount);
+		console.log("num recepteur ", saveAccount.slice(0, 12));
+		console.log("compte recepteur", saveAccount);*/
 
 		setInprocess(true);
 
-		axios(
-			{
-				method: 'post',
-				url: `${baseUrl}/transaction/create/`,
-				data: {
-					senderPhone: senderPhone,
-					senderaccount: senderAccount,
-					receiverPhone: saveAccount.numCompte.slice(0, 9),
-					receiverAccount: saveAccount.numCompte,
-					montant: amount,
-					type: "paiement",
-					nip: nip
-				},
-				headers: { "Content-Type": "multipart/form-data", "accept": "application/json" },
-			}
-		).then(response => {
+		let userNip = nip == "" ? "xxxx":nip
+		lauchTransaction(senderPhone, saveAccount.numCompte.slice(0, 12), cashierPhone, senderAccount, saveAccount.numCompte, amount, "paiement", userNip).then(
+			(response) => {
 
-			console.log(response.data);
+				console.log(response.data);
 
-			if (response.data.succes == true) {
+				if (response.data.success == true) {
 
-				setInprocess(false);
-				setAuthRequired(false);
-				setFailed(false);
-				setSucceed(true);
-				setInEnd(true);
-
-			}
-			else {
-
-				if (response.data.detail == "Disabled account") {
-					setFailure("failure2");
 					setInprocess(false);
 					setAuthRequired(false);
-					setFailed(true);
-					setSucceed(false);
+					setFailed(false);
+					setSucceed(true);
 					setInEnd(true);
-				}
-
-				else if (response.data.detail == "insufficient balance") {
-					setFailure("failure3");
-					setInprocess(false);
-					setAuthRequired(false);
-					setFailed(true);
-					setSucceed(false);
-					setInEnd(true);
-				}
-				else if (response.data.detail == "Invalid nip") {
-					setFailure("failure4");
-					setInprocess(false);
-					setAuthRequired(false);
-					setFailed(true);
-					setSucceed(false);
-					setInEnd(true);
-				}
-				else if (response.data.detail == "autorisation required") {
-					setInprocess(false);
-					setAuthRequired(true);
-					setFailed(true);
-					setSucceed(false);
-					setInEnd(false);
 
 				}
+				else {
+
+					if (response.data.detail == "Card locked") {
+						setFailure("failure2");
+						setInprocess(false);
+						setAuthRequired(false);
+						setFailed(true);
+						setSucceed(false);
+						setInEnd(true);
+					}
+
+					else if (response.data.detail == "insufficient balance") {
+						setFailure("failure3");
+						setInprocess(false);
+						setAuthRequired(false);
+						setFailed(true);
+						setSucceed(false);
+						setInEnd(true);
+					}
+					else if (response.data.detail == "Invalid nip") {
+						setFailure("failure4");
+						setInprocess(false);
+						setAuthRequired(false);
+						setFailed(true);
+						setSucceed(false);
+						setInEnd(true);
+					}
+					else if (response.data.detail == "Disabled account") {
+						setFailure("failure5");
+						setInprocess(false);
+						setAuthRequired(false);
+						setFailed(true);
+						setSucceed(false);
+						setInEnd(true);
+					}
+					else if (response.data.detail == "autorisation required") {
+						setInprocess(false);
+						setAuthRequired(true);
+						setFailed(true);
+						setSucceed(false);
+						setInEnd(false);
+
+					}
+				}
+
+			}).catch(function (error) {
+
+				console.log(error);
 
 
+			})
 
-			}
-
-
-		}).catch(function (error) {
-
-
-
-
-		})
 
 	}
 
@@ -306,17 +299,21 @@ function PaiementValidationScreen() {
 
 
 	const endProcess = () => {
+
+		NfcManager.cancelTechnologyRequest();
+		navigation.navigate("HomeScreen" as never);
+
 		//setModalVisible(false);
-		setInprocess(false);
+		/*setInprocess(false);
 		setAuthRequired(false);
 		setFailed(false);
 		setSucceed(false);
 		setInEnd(false);
-		setInWaiting(true);
+		setInWaiting(true);*/
 		//setMontant("");
 		//setIsvalidMontant(false);
-		setNip("");
-		NfcManager.cancelTechnologyRequest();
+		/*setNip("");
+		NfcManager.cancelTechnologyRequest();*/
 	}
 
 
@@ -331,11 +328,11 @@ function PaiementValidationScreen() {
 
 	return (
 
-		<View style={{ flex: 3 }}>
+		<View style={{ flex: 1 }}>
 
 			<View style={{ flex: 2, justifyContent: 'center', alignItems: 'center', marginTop: 0 }}>
 				<Text style={{ fontSize: 20, color: "black", fontWeight: "bold"  }}>{t('totalamount') }</Text>
-				<Text style={{ fontSize: 40, color: "#009387", fontWeight: "bold", position: 'relative'}}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text>
+				<Text style={{ fontSize: 40, color: Colors.header, fontWeight: "bold", position: 'relative'}}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text>
 			</View>
 
 			<View style={{ flex: 8 }}>
@@ -358,53 +355,41 @@ function PaiementValidationScreen() {
 					</View>
 				}
 
-			</View>
+				{
+					authRequired && !inProcess && !inWaiting &&
+					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
+						<Animatable.View animation="pulse" iterationCount="infinite">
+								<Text><MaterialCommunityIcons name="key-outline" size={150} color="orange" /></Text>
+						</Animatable.View>
+						<Text style={{ padding: 20, fontSize: 16, color: 'orange', textAlign: 'center' }}>{t('authorizationrequired')}</Text>
+					</View>
+				}
 
-			<View style={{ flex: 1, alignItems:"center" }}>
-				<Text style={{ padding: 20, fontSize: 16, color: '#009387', fontWeight: "bold" }}>Nano Pay</Text>
-			</View>
-		
-				
-
-				{/*<View style={{ flex: 10, padding: 15 }}>
-
-					
-
-					
-
-
-					
-
-
-					{
-						authRequired && !inProcess && !inWaiting &&
-						<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-							<MaterialCommunityIcons name="key-outline" size={150} color={Colors.text} />
-							<Text style={{ padding: 20, fontSize: 16, color: 'gray', textAlign: 'center' }}>{t('authorizationrequired')}</Text>
-						</View>
-					}
+				{
+					!inWaiting && succeed && !authRequired &&
+					<View  style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
+							<Animatable.View animation="pulse" iterationCount="infinite">
+								<Text><Ionicons name="checkmark-done-circle-outline" size={150} color="#004d46" /></Text>
+							</Animatable.View>
+						<Text style={{ padding: 20, fontSize: 16, color: '#004d46', textAlign: "center" }}> {t('paymentmadesuccessfully')}  </Text>
+					</View>
 
 
+				}
 
-					{
-						!inWaiting && succeed && !authRequired &&
-						<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-							<Ionicons name="checkmark-done-circle-outline" size={150} color="green" />
-							<Text style={{ padding: 20, fontSize: 16, color: 'green' }}> {t('paymentmadesuccessfully')}  </Text>
-						</View>
-					}
 
-					{
-						!inWaiting && failed && !authRequired &&
-						<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-							<Ionicons name="ios-warning" size={150} color="red" />
-							<Text style={{ padding: 20, fontSize: 16, color: 'red', textAlign: 'center' }}> {t(failure)}</Text>
-						</View>
-					}
+				{
+					!inWaiting && failed && !authRequired &&
+					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
+						<Animatable.View animation="pulse" iterationCount="infinite">
+								<Text><Ionicons name="ios-warning" size={150} color="red"/> </Text>
+						</Animatable.View>
+						<Text style={{ padding: 20, fontSize: 16, color: 'red', textAlign: 'center' }}> {t(failure)}</Text>
+					</View>
+				}
 
-				</View>*/}
 
-				{/*{
+				{
 					!inWaiting && authRequired &&
 					<View style={{ padding: Metrics.doubleBaseMargin, }}>
 						<TextInput
@@ -417,18 +402,16 @@ function PaiementValidationScreen() {
 							onChangeText={(value) => setNip(value)}
 						/>
 					</View>
-
 				}
-
 
 				{
 					authRequired &&
 					<View style={{ flex: 2, padding: Metrics.doubleBaseMargin, flexDirection: 'row', }}>
 
 						<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
-							<TouchableOpacity style={styles.buttonModal} onPress={() => endProcess()}>
+							<TouchableOpacity style={styles.buttonModal2} onPress={() => endProcess()}>
 								<View>
-									<Text style={[styles.textButton, {
+									<Text style={[styles.textButton2, {
 										color: '#fff'
 									}]}>{t('cancel')}</Text>
 								</View>
@@ -436,9 +419,9 @@ function PaiementValidationScreen() {
 						</View>
 
 						<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
-							<TouchableOpacity style={styles.buttonModal} onPress={() => sendAutorisation()}>
+							<TouchableOpacity style={styles.buttonModal2} onPress={() => sendAutorisation()}>
 								<View>
-									<Text style={[styles.textButton, {
+									<Text style={[styles.textButton2, {
 										color: '#fff'
 									}]}>{t('confirm')}</Text>
 								</View>
@@ -462,7 +445,20 @@ function PaiementValidationScreen() {
 							</TouchableOpacity>
 						</View>
 					</View>
-				}*/}
+				}
+
+
+			</View>
+
+
+
+
+			<View style={{ flex: 1, alignItems:"center" }}>
+				<Text style={{ padding: 20, fontSize: 16, color: Colors.header, fontWeight: "bold" }}>Nano Pay</Text>
+			</View>
+		
+				
+			
 		  </View>
 
 	);
@@ -496,13 +492,30 @@ const styles = StyleSheet.create({
 	},
 
 	textButton: {
-		fontSize: 16,
-		fontWeight: 'bold'
+		fontSize: 18,
+		fontWeight: 'bold',
+		 color: "#fff"
 	},
 
 	buttonModal: {
 		width: '90%',
-		height: 35,
+		height: 55,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 5,
+		backgroundColor: Colors.header,
+		marginTop: 0
+	},
+
+	textButton2: {
+		fontSize: 16,
+		fontWeight: 'bold',
+		color: "#fff"
+	},
+
+	buttonModal2: {
+		width: '90%',
+		height: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 5,
@@ -519,7 +532,6 @@ const styles = StyleSheet.create({
 
 
 	modal: {
-
 		width: Dimensions.get('window').width - Metrics.doubleBaseMargin,
 		height: Dimensions.get('window').height - 3 * Metrics.navBarHeight,
 		backgroundColor: "white",
@@ -529,7 +541,6 @@ const styles = StyleSheet.create({
 		borderRadius: 2,
 		borderColor: '#0084BD',
 		borderWidth: 0.5,
-
 	},
 
 })

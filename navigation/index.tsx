@@ -1,12 +1,17 @@
+import React from 'react';
 import { ColorSchemeName } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, DarkTheme, DefaultTheme } from "@react-navigation/native";
+import SplashScreen from "react-native-splash-screen";
 import { useTranslation } from 'react-i18next';
 import HomeScreen from "../screens/HomeScreen";
 import SettingScreen from "../screens/SettingScreen";
 import SignInScreen from "../screens/SignInScreen";
+import HistoryScreen from "../screens/HistoryScreen"
 import PaiementValidationScreen from "../screens/PaiementValidationScreen";
 import { useSelector, useDispatch } from 'react-redux';
+import { Colors } from '../Themes';
+
 
 type propType ={
  colorScheme: ColorSchemeName
@@ -35,6 +40,11 @@ function RootNavigator() {
  
    // console.log(signin);
    // console.log(user);
+    //hide Splash screen on app load.
+    React.useEffect(() => {
+        SplashScreen.hide();
+    });
+
 
 
 
@@ -52,8 +62,7 @@ function RootNavigator() {
                               headerTintColor: '#fff',
                               headerTitleAlign: 'center',
                               headerStyle: {
-                                  backgroundColor: '#009387',
-                                  //backgroundColor: '#009387',
+                                  backgroundColor: Colors.header
                               },
                               headerShown: false,
                           }}
@@ -70,8 +79,7 @@ function RootNavigator() {
                               headerTintColor: '#fff',
                               headerTitleAlign: 'center',
                               headerStyle: {
-                                  backgroundColor: '#009387',
-                                  //backgroundColor: '#009387',
+                                  backgroundColor: Colors.header
                               },
                               headerShown: false,
                           }}
@@ -84,7 +92,7 @@ function RootNavigator() {
                               title: t('settings') || "dd",
                               headerTintColor: '#fff',
                               headerStyle: {
-                                  backgroundColor: '#009387',
+                                  backgroundColor: Colors.header
                               }
                           }}
                       />
@@ -96,7 +104,21 @@ function RootNavigator() {
                               title: t('payment') || "dd",
                               headerTintColor: '#fff',
                               headerStyle: {
-                                  backgroundColor: '#009387',
+                                  backgroundColor: Colors.header
+                              }
+                          }}
+                      />
+
+                      
+
+                      <Stack.Screen
+                          name="HistoryScreen"
+                          component={HistoryScreen}
+                          options={{
+                              title: t('payment') || "dd",
+                              headerTintColor: '#fff',
+                              headerStyle: {
+                                  backgroundColor: Colors.header,
                               }
                           }}
                       />

@@ -27,12 +27,17 @@ type propsType = {
 }
 
 
-function AccountSwipeable({ accounts, setAccountPanelActive, accountPanelActive  }:propsType) {
+function AccountSwipeable({ accounts, setAccountPanelActive, accountPanelActive }:propsType) {
 
 
     const { width, height } = Dimensions.get('window');
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
+    const state = useSelector<any, any>(state => state.userReducer);
+
+    console.log(accounts)
+
+
     const [panelProps, setPanelProps] = useState({
         fullWidth: true,
         openLarge: true,
@@ -57,7 +62,7 @@ function AccountSwipeable({ accounts, setAccountPanelActive, accountPanelActive 
     const renderRow = ({ item }:any) => {
         return (
 
-            <TouchableOpacity style={styles.account} onPress={() => { selectAccount(item) }}>
+            <TouchableOpacity style={state.pro_account?.numCompte == item.numCompte ? styles.accountSelected: styles.account} onPress={() => { selectAccount(item) }}>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={{ flex: 5 }}>
                         <Text style={{ color: 'black', fontSize: 14, paddingTop: 3, paddingLeft: 5, fontWeight: "bold" }}>{item.nomCompte}</Text>
@@ -75,7 +80,7 @@ function AccountSwipeable({ accounts, setAccountPanelActive, accountPanelActive 
 
 
     return (
-        <SwipeablePanel {...panelProps} isActive={accountPanelActive} style={{ height: 300, padding: 5 }}>
+        <SwipeablePanel {...panelProps} isActive={accountPanelActive} style={{ height: accounts.length <= 1 ? 170 : accounts.length * 130, padding: 5 }}>
 
             <View>
                 <View style={{ flex: 1, marginBottom: 20, justifyContent: 'center', alignItems: 'center' }}>
@@ -86,9 +91,8 @@ function AccountSwipeable({ accounts, setAccountPanelActive, accountPanelActive 
             <FlatList
                 data={accounts}
                 renderItem={renderRow}
-                keyExtractor={item => item.id }
+                keyExtractor={item => item.id.toString() }
             />
-
         </SwipeablePanel>
     );
 
@@ -107,6 +111,16 @@ const styles = StyleSheet.create({
         marginTop: 6,
         backgroundColor: "#F9F9F8",
         padding: 10,
+    },
+
+    accountSelected: {
+        width: '100%',
+        flex: 1,
+        marginTop: 6,
+        backgroundColor: "#F9F9F8",
+        padding: 10,
+        borderWidth: 2,
+        borderColor: "green"
     }
 
 })

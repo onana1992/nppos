@@ -27,6 +27,24 @@
   "activepaiementAccount": "Compte de paiement actif",
   "language": "Langue",
   "changelanguage": "Changer la  langue",
-  "validate": "Valider"
+  "validate": "Valider",
+  "paymentmadesuccessfully": "Paiement effectué  avec succès",
+  "authorizationrequired": "Autorisation réquise",
+  "confirm": "Confirmer",
+  "failure1": "Paiement non effectué, carte non valide.",
+  "failure2": "Paiement non effectué, carte verrouillée.",
+  "failure3": "Paiement non effectué, solde insuffisant.",
+  "failure4": "Paiement non effectué, NIP incorrect.",
+  "failure5": "Paiement non effectué, carte non activé.",
+  "TransactionHistory": "Historique des transactions",
+  "incomingpayment": "Paiement reçu",
+  "to": "à",
+  "pleasewait": "Veuillez patienter",
+  "seemoretransactions": "Voir plus  transactions",
+  "chooseanaccount": "Choisir un compte",
+  "selectaccountmessage": "Aucun compte actif, veuillez choisir un compte de paiement dans la page Paramètres ",
+  "from": "De"
+ 
+
 
 }

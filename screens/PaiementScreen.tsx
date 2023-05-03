@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 import VirtualKeyboard from 'react-native-virtual-keyboard';
 import NfcManager from 'react-native-nfc-manager';
 import { useSelector, useDispatch } from 'react-redux';
-import { getUser } from "../redux/actions"
+import { Colors } from '../Themes';
+
 
 export default function PaiementScreen() {
 
@@ -15,9 +16,8 @@ export default function PaiementScreen() {
     const [amount, setAmount] = React.useState<string>("0");
     const navigation = useNavigation();
     const dispatch = useDispatch<any>();
-    const state = useSelector <any, any> (state => state.userReducer);
-    const [user, setUser] = useState(state.user.user);
-    const [signin, setSignin] = useState(state.signin);
+    const state = useSelector<any, any>(state => state.userReducer);
+    const [saveAccount, setSaveAccount] = useState(state.pro_account);
     const [hasNfc, setHasNfc] = React.useState(false);
     const [enabled, setEnabled] = React.useState(true);
     const appState = useRef(AppState.currentState);
@@ -46,29 +46,20 @@ export default function PaiementScreen() {
     
 
     async function checkNfc() {
-        
-       
+          
         const supported = await NfcManager.isSupported();
-
-
         if (supported) {
-         
               console.log("Supported");
         }
 
         setHasNfc(supported);
         setEnabled(await NfcManager.isEnabled()); // only for Android, always
-
-
     }
 
-
-    //const fetchUser = () => dispatch(getUser());
 
 
     const validate = () => {
         
-        // fetchUser()
         if (!hasNfc) {
             Alert.alert(
                 t('Error') || "",
@@ -122,7 +113,28 @@ export default function PaiementScreen() {
 
              }
              else {
-                 navigation.navigate('PaiementValidationScreen' as never, { amount: amount } as never);
+
+                 if (saveAccount == null) {
+
+                     Alert.alert(
+                         t('Error') || "",
+                         t('selectaccountmessage') || "",
+                         [{
+                             text: t('close') || "",
+                             onPress: () => { return null },
+                             style: 'cancel'
+                         },
+
+
+                         ]
+                     );
+
+                 }
+                 else {
+
+                     navigation.navigate('PaiementValidationScreen' as never, { amount: amount } as never);
+                 }
+                 
 
              }
 
@@ -143,6 +155,7 @@ export default function PaiementScreen() {
 
         return () => {
             subscription.remove();
+
         };
 
     }, []);
@@ -162,7 +175,7 @@ export default function PaiementScreen() {
 
             <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center', margin: 10, marginTop: -30, }}>
                 <View style={{ width: "100%", alignItems:"center", borderWidth: 0.5, borderColor: "gray", marginTop: 10, padding:10}}>
-                    <Text style={{ fontSize: 40, color: "#009387", fontWeight: "bold", position: 'relative',  }}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text> 
+                    <Text style={{ fontSize: 40, color: Colors.header, fontWeight: "bold", position: 'relative',  }}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text> 
                 </View>
             </View>
 
@@ -171,7 +184,8 @@ export default function PaiementScreen() {
                     cellStyle={{ padding: 20, borderWidth:0.5, borderColor: "gray" }}
                     rowStyle={{ width: '100%' }}
                     textStyle={{ fontWeight: 'bold' }}
-                    color='#009387' pressMode='string'
+                    color={Colors.header }
+                    pressMode='string'
                     onPress={(val: any) => keyboardPress(val)}
                 />
             </View>
@@ -201,7 +215,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 5,
-        backgroundColor:"#009387",
+        backgroundColor: Colors.header,
         marginTop:20,
        
   },

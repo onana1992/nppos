@@ -1,10 +1,10 @@
-
-import { View, Text, StyleSheet, FlatList, Pressable, } from "react-native";
-import { NativeStackHeaderProps } from "@react-navigation/native-stack";
+import { StyleSheet, Pressable, } from "react-native";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import SideMenuScreen from './SideMenuScreen';
-import PaiementScreen from './PaiementScreen'
+import PaiementScreen from './PaiementScreen';
+import { Colors } from '../Themes';
+
 
 
 const Drawer = createDrawerNavigator();
@@ -19,7 +19,6 @@ export default function HomeScreen() {
             screenOptions={{
                 drawerPosition:'left',
                 headerShadowVisible:false,
-                //drawerIcon: () =>{return < Ionicons color='red' size={25} name='menu-outline' />} 
             }}
             drawerContent={(props) => <SideMenuScreen/>}
         >
@@ -28,17 +27,16 @@ export default function HomeScreen() {
                 name="launch" 
                 component={PaiementScreen} 
                 options={{
-                title:"NP POS",
-                headerTitleAlign:'center',
-                headerTintColor: '#fff',
-                headerStyle: {
-                    backgroundColor:"#009387", 
-                },
-                headerTitleStyle: {
-                    fontSize:19,
-                    color:"#fff"
-                },
-                 
+                    title:"NP POS",
+                    headerTitleAlign:'center',
+                    headerTintColor: '#fff',
+                    headerStyle: {
+                        backgroundColor: Colors.header, 
+                    },
+                    headerTitleStyle: {
+                        fontSize:19,
+                        color:"#fff"
+                    },
                 }}
             />
 

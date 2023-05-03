@@ -69,10 +69,11 @@ function SignInScreen() {
             dispatch(action3);
         }
 
+        const userId = "237"+user
 
         try {
 
-            var url = `${baseUrl}user/login/${user}/${password}`;
+            var url = `${baseUrl}user/login/${userId}/${password}`;
             const response = await axios.get(url);
 
             console.log(response.data);

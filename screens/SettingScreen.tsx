@@ -9,18 +9,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import AccountSwipeable from '../componnents/SwipeablePanel/AccountSwipeable';
 
 
+
 export default function MenuScreen() {
 
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
     const state = useSelector<any, any>(state => state.userReducer);
     const [user, setUser] = useState(state.user.user);
-    const [saveAccount, setSaveAccount] = useState(state.pro_account);
+    //const [saveAccount, setSaveAccount] = useState(state.pro_account);
     const [proAccounts, setProAccounts] = useState<any[]>([]);
     const [languagePanelActive, setLanguagePanelActive] = useState(false);
     const [accountPanelActive, setAccountPanelActive] = useState(false);
 
-    //console.log("Save account ",saveAccount);
 
     const [panelProps, setPanelProps] = useState({
         fullWidth: true,
@@ -140,7 +140,6 @@ export default function MenuScreen() {
             </SwipeablePanel>
 
           
-
              <AccountSwipeable accounts= {proAccounts} setAccountPanelActive={setAccountPanelActive} accountPanelActive={accountPanelActive}/>
 
     </View>
@@ -151,9 +150,8 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
 
   container: {
-
-        flex: 1,
-        backgroundColor:"#fff"
+      flex: 1,
+      backgroundColor:"#fff"
   },
   
 })

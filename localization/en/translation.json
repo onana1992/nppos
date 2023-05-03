@@ -26,8 +26,21 @@
   "activepaiementAccount": "Active payment account",
   "language": "Language",
   "changelanguage": "Change de language",
-  "validate" : "Validate"
-
-
-
+  "validate": "Validate",
+  "paymentmadesuccessfully": "Payment successfully completed",
+  "authorizationrequired": "Authorization required",
+  "confirm": "Confirm",
+  "failure1": "Payment not proceed, invalid card.",
+  "failure2": "Payment not proceed, card locked.",
+  "failure3": "Payment not proceed, insufficient balance.",
+  "failure4": "Payment not proceed, incorrect PIN.",
+  "failure5": "Payment not proceed, card not actived.",
+  "TransactionHistory": "Transaction History",
+  "incomingpayment": "Incoming payment",
+  "to": "to",
+  "from": "From",
+  "pleasewait": "Please wait",
+  "seemoretransactions": "See more transactions",
+  "chooseanaccount": "Choose an account",
+  "selectaccountmessage": "No active account, please choose a payment account in  Settings page"
 }

@@ -114,7 +114,7 @@ export default function PaiementScreen() {
              }
              else {
 
-                 if (saveAccount == null) {
+                 if (state.pro_account == null) {
 
                      Alert.alert(
                          t('Error') || "",
@@ -148,6 +148,8 @@ export default function PaiementScreen() {
 
         const subscription = AppState.addEventListener("change", nextAppState => {
 
+           // alert();
+           // setSaveAccount (state.pro_account);
             checkNfc();
             appState.current = nextAppState;         
 
@@ -173,15 +175,15 @@ export default function PaiementScreen() {
    
         <View style={styles.container}>
 
-            <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center', margin: 10, marginTop: -30, }}>
-                <View style={{ width: "100%", alignItems:"center", borderWidth: 0.5, borderColor: "gray", marginTop: 10, padding:10}}>
-                    <Text style={{ fontSize: 40, color: Colors.header, fontWeight: "bold", position: 'relative',  }}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text> 
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 10, marginRight: 10,  }}>
+                <View style={{ width: "100%", alignItems:"center", borderWidth: 0.5, borderColor: "gray", marginTop: 10, padding:5}}>
+                    <Text style={{ fontSize: 30, color: Colors.header, fontWeight: "bold", position: 'relative',  }}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text> 
                 </View>
             </View>
 
-            <View style={{flex:5, justifyContent:'center', alignItems:'center'}}>
+            <View style={{flex:5, justifyContent:'flex-start', alignItems:'flex-start'}}>
                 <VirtualKeyboard
-                    cellStyle={{ padding: 20, borderWidth:0.5, borderColor: "gray" }}
+                    cellStyle={{ padding: 8, borderWidth:0.5, borderColor: "gray" }}
                     rowStyle={{ width: '100%' }}
                     textStyle={{ fontWeight: 'bold' }}
                     color={Colors.header }
@@ -190,7 +192,7 @@ export default function PaiementScreen() {
                 />
             </View>
 
-            <View style={{flex:2, padding:30, justifyContent:'flex-end'}}>
+            <View style={{ flex: 2, paddingLeft: 30, paddingRight: 30, paddingBottom: 30, justifyContent:'flex-end'}}>
                 <TouchableOpacity style={styles.button} onPress={() => validate()}>
                     <Text style={styles.textButton}>{ t('validate') }</Text>
                 </TouchableOpacity>
@@ -211,7 +213,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-        height: 55,
+        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 5,
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
 
   textButton: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: "100",
         color: "#fff"
   },
   

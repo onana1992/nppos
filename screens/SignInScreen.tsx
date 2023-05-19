@@ -18,8 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Feather from 'react-native-vector-icons/Feather';
-import LoadingModal from '../componnents/LoadingModal'
-
+import LoadingModal from '../componnents/LoadingModal';
 
 
 function SignInScreen() {
@@ -92,11 +91,11 @@ function SignInScreen() {
             }
             else {
 
-                /*Toast.show({
+                Toast.show({
                     type: 'failure',
-                    props: { message: I18n.t('failureAuth') },
+                    props: { message: t('failureAuth') },
                     position: 'bottom'
-                });*/
+                });
 
             }
 
@@ -263,8 +262,7 @@ function SignInScreen() {
 
                                         </View>
 
-                     
-
+                    
                                         <View style={styles.button}>
 
                                             <TouchableOpacity
@@ -303,7 +301,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#009387'
     },
     header: {
-        flex: 4,
+        flex: 1,
         justifyContent: 'flex-end',
         paddingHorizontal: 20,
         paddingBottom: 50

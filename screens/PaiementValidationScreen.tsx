@@ -335,14 +335,17 @@ function PaiementValidationScreen() {
 				<Text style={{ fontSize: 40, color: Colors.header, fontWeight: "bold", position: 'relative'}}>{amount}<Text style={{ fontSize: 18, fontWeight: "bold" }}> FCFA</Text></Text>
 			</View>
 
-			<View style={{ flex: 8 }}>
+			<View style={{ flex: 7 }}>
 
 				{
 					inWaiting &&
 
+
 					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-						<Text style={{ padding: 20, fontSize: 16, color: 'black', fontWeight: "bold" }}>{t('presentyourcard')}</Text>
-						<MaterialCommunityIcons name="contactless-payment-circle-outline" size={120} color="black" />
+							<View style={{ flex: 0.8, alignItems: "center", justifyContent: 'center', borderWidth: 1, borderColor: "gray", borderStyle:"dashed" }}>
+								<MaterialCommunityIcons name="contactless-payment-circle-outline" size={120} color="black" />
+								<Text style={{ padding: 20, fontSize: 16, color: 'black', }}>{t('presentyourcard')}</Text>
+							</View>
 					</View>
 				}
 
@@ -350,30 +353,71 @@ function PaiementValidationScreen() {
 					inProcess && !inWaiting &&
 
 					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-						<ActivityIndicator size="large" color={Colors.background} />
+							<ActivityIndicator size="large" color={Colors.header} />
 						<Text style={{ padding: 20, fontSize: 16, color: 'gray' }}> {t('processing1')}</Text>
 					</View>
 				}
 
 				{
 					authRequired && !inProcess && !inWaiting &&
+					
 					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-						<Animatable.View animation="pulse" iterationCount="infinite">
-								<Text><MaterialCommunityIcons name="key-outline" size={150} color="orange" /></Text>
-						</Animatable.View>
-						<Text style={{ padding: 20, fontSize: 16, color: 'orange', textAlign: 'center' }}>{t('authorizationrequired')}</Text>
+						<View style={{ flex: 1, alignItems: "center", justifyContent: 'center', borderWidth: 1, borderColor: "gray", borderStyle:"dashed", width:"90%" }}>
+							<Animatable.View animation="pulse" iterationCount="infinite">
+									<Text><MaterialCommunityIcons name="key-outline" size={80} color="orange" /></Text>
+							</Animatable.View>
+
+							<Text style={{ padding: 10, fontSize: 16, color: 'orange', textAlign: 'center' }}>{t('authorizationrequired')}</Text>
+							<View style={{ padding:10, paddingTop: Metrics.doubleBaseMargin, width:"100%" }}>
+								<TextInput
+									style={styles.textInput}
+									value={nip}
+									placeholderTextColor="#c4c3cb"
+									selectionColor='black'
+									keyboardType="numeric"
+									placeholder="Entrer votre NIP"
+									onChangeText={(value) => setNip(value)}
+								/>
+							</View>
+							<View style={{ flex: 2, padding: 5, flexDirection: 'row', }}>
+
+								<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
+									<TouchableOpacity style={styles.buttonModal2} onPress={() => endProcess()}>
+										<View>
+											<Text style={[styles.textButton2, {
+												color: '#fff'
+											}]}>{t('cancel')}</Text>
+										</View>
+									</TouchableOpacity>
+								</View>
+
+								<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
+									<TouchableOpacity style={styles.buttonModal2} onPress={() => sendAutorisation()}>
+										<View>
+											<Text style={[styles.textButton2, {
+												color: '#fff'
+											}]}>{t('confirm')}</Text>
+										</View>
+									</TouchableOpacity>
+								</View>
+
+							</View>
+
+						</View>
 					</View>
 				}
 
 				{
 					!inWaiting && succeed && !authRequired &&
-					<View  style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
+					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
+						<View style={{ flex: 0.8, alignItems: "center", justifyContent: 'center', borderWidth: 1, borderColor: "gray", borderStyle:"dashed" }}>
+
 							<Animatable.View animation="pulse" iterationCount="infinite">
 								<Text><Ionicons name="checkmark-done-circle-outline" size={150} color="#004d46" /></Text>
 							</Animatable.View>
-						<Text style={{ padding: 20, fontSize: 16, color: '#004d46', textAlign: "center" }}> {t('paymentmadesuccessfully')}  </Text>
+							<Text style={{ padding: 20, fontSize: 16, color: '#004d46', textAlign: "center" }}> {t('paymentmadesuccessfully')}  </Text>
+						</View>
 					</View>
-
 
 				}
 
@@ -381,59 +425,23 @@ function PaiementValidationScreen() {
 				{
 					!inWaiting && failed && !authRequired &&
 					<View style={{ flex: 6, alignItems: "center", justifyContent: 'center' }}>
-						<Animatable.View animation="pulse" iterationCount="infinite">
-								<Text><Ionicons name="ios-warning" size={150} color="red"/> </Text>
-						</Animatable.View>
-						<Text style={{ padding: 20, fontSize: 16, color: 'red', textAlign: 'center' }}> {t(failure)}</Text>
-					</View>
-				}
+						<View style={{ flex: 0.8, alignItems: "center", justifyContent: 'center', borderWidth: 1, borderColor: "gray", borderStyle:"dashed" }}>
 
-
-				{
-					!inWaiting && authRequired &&
-					<View style={{ padding: Metrics.doubleBaseMargin, }}>
-						<TextInput
-							style={styles.textInput}
-							value={nip}
-							placeholderTextColor="#c4c3cb"
-							selectionColor='black'
-							keyboardType="numeric"
-							placeholder="Entrer votre NIP"
-							onChangeText={(value) => setNip(value)}
-						/>
-					</View>
-				}
-
-				{
-					authRequired &&
-					<View style={{ flex: 2, padding: Metrics.doubleBaseMargin, flexDirection: 'row', }}>
-
-						<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
-							<TouchableOpacity style={styles.buttonModal2} onPress={() => endProcess()}>
-								<View>
-									<Text style={[styles.textButton2, {
-										color: '#fff'
-									}]}>{t('cancel')}</Text>
-								</View>
-							</TouchableOpacity>
+							<Animatable.View animation="pulse" iterationCount="infinite">
+									<Text><Ionicons name="ios-warning" size={140} color="red"/> </Text>
+							</Animatable.View>
+							<Text style={{ padding: 20, fontSize: 16, color: 'red', textAlign: 'center' }}> {t(failure)}</Text>
 						</View>
-
-						<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
-							<TouchableOpacity style={styles.buttonModal2} onPress={() => sendAutorisation()}>
-								<View>
-									<Text style={[styles.textButton2, {
-										color: '#fff'
-									}]}>{t('confirm')}</Text>
-								</View>
-							</TouchableOpacity>
-						</View>
-
 					</View>
 				}
+
+
+				
 
 				{
 					inEnd &&
-					<View style={{ flex: 2, padding: Metrics.doubleBaseMargin, flexDirection: 'row', }}>
+					
+					<View style={{ flex: 0.5, padding: Metrics.doubleBaseMargin, flexDirection: 'row', }}>
 
 						<View style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
 							<TouchableOpacity style={styles.buttonModal} onPress={() => endProcess()}>
@@ -451,9 +459,7 @@ function PaiementValidationScreen() {
 			</View>
 
 
-
-
-			<View style={{ flex: 1, alignItems:"center" }}>
+			<View style={{ flex: 2, alignItems:"center", justifyContent:"flex-end" }}>
 				<Text style={{ padding: 20, fontSize: 16, color: Colors.header, fontWeight: "bold" }}>Nano Pay</Text>
 			</View>
 		
@@ -499,7 +505,7 @@ const styles = StyleSheet.create({
 
 	buttonModal: {
 		width: '90%',
-		height: 55,
+		height: 45,
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 5,

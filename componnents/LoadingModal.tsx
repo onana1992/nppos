@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
 
     modal: {
         width: Dimensions.get('window').width / 1.1 - Metrics.doubleBaseMargin,
-        height: Dimensions.get('window').height / 1.7 - 3 * Metrics.navBarHeight,
+        height: Dimensions.get('window').height / 1.3 - 3 * Metrics.navBarHeight,
         alignSelf: 'center',
         marginVertical: 60,
         marginHorizontal: 20,

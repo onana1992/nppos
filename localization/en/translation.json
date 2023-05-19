@@ -22,6 +22,7 @@
   "invalidamount": "Invalid amount, let enter a valid amount",
   "totalamount": "Total Amount",
   "presentyourcard": "Present your card to pay",
+  "processing": "Processing ...",
   "processing1": "Processing ...",
   "activepaiementAccount": "Active payment account",
   "language": "Language",
@@ -42,5 +43,9 @@
   "pleasewait": "Please wait",
   "seemoretransactions": "See more transactions",
   "chooseanaccount": "Choose an account",
-  "selectaccountmessage": "No active account, please choose a payment account in  Settings page"
+  "selectaccountmessage": "No active account, please choose a payment account in  Settings page",
+  "success": "succès",
+  "info": "Info",
+  "failure": "Échec",
+  "failureAuth": "Invalid username or password"
 }

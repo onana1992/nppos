@@ -23,7 +23,6 @@
   "invalidamount": "Montant invalide,veuillez entrer un montant valide",
   "totalamount": "Montant total",
   "presentyourcard": "Présentez votre carte pour payer",
-  "processing1": "Traitement en cours ...",
   "activepaiementAccount": "Compte de paiement actif",
   "language": "Langue",
   "changelanguage": "Changer la  langue",
@@ -43,8 +42,12 @@
   "seemoretransactions": "Voir plus  transactions",
   "chooseanaccount": "Choisir un compte",
   "selectaccountmessage": "Aucun compte actif, veuillez choisir un compte de paiement dans la page Paramètres ",
-  "from": "De"
- 
-
+  "from": "De",
+  "success": "Success",
+  "info": "Info",
+  "failure": "Failure",
+  "signin": "Se connecter",
+  "processing": "Traitement en cours ...",
+  "processing1": "Traitement en cours ..."
 
 }

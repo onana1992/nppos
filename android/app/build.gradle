@@ -119,12 +119,12 @@ android {
         }
 
         release {
-            if (project.hasProperty('nppos.keystore')) {
-                storeFile file('nppos.keystore')
+           
+                storeFile file('nppos-upload.keystore')
                 storePassword 'nanojunior92'
                 keyAlias 'nppos-alias'
                 keyPassword 'nanojunior92'
-            }
+            
         }
     }
     buildTypes {

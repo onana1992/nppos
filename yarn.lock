@@ -6213,6 +6213,11 @@ react-native-nfc-manager@^3.14.2:
   dependencies:
     "@expo/config-plugins" "^4.0.16"
 
+react-native-radio-buttons-group@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-radio-buttons-group/-/react-native-radio-buttons-group-3.0.1.tgz#d78edf90e67c99394da674129f93da4a3dd467be"
+  integrity sha512-F54i/tt5+BUoZwwbo+9zCf4tKGz9KahcH5g6P+bLwkWC0BC07da5cwGU+8Akru981HaMzx6f7Jgl3ZAhR1Fd4Q==
+
 react-native-ratings@^8.1.0:
   version "8.1.0"
   resolved "https://registry.npmjs.org/react-native-ratings/-/react-native-ratings-8.1.0.tgz"

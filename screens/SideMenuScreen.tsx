@@ -52,8 +52,12 @@ export default function SideMenuScreen() {
 
         const action1 = { type: "SET_ACCOUNT", value: null };
         const action2 = { type: "SIGN_OUT", };
+        const action3 = { type: "SET_MODE", value: null };
+        const action4 = { type: "SET_PRO_ACCOUNT", value: [] };
         dispatch(action1)
         dispatch(action2);
+        dispatch(action3)
+        dispatch(action4);
 
     }
  

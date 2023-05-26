@@ -13,11 +13,12 @@ import { Colors } from '../Themes';
 export default function PaiementScreen() {
 
   
+  
     const [amount, setAmount] = React.useState<string>("0");
     const navigation = useNavigation();
     const dispatch = useDispatch<any>();
     const state = useSelector<any, any>(state => state.userReducer);
-    const [saveAccount, setSaveAccount] = useState(state.pro_account);
+    const [saveAccount, setSaveAccount] = useState(state.account);
     const [hasNfc, setHasNfc] = React.useState(false);
     const [enabled, setEnabled] = React.useState(true);
     const appState = useRef(AppState.currentState);
@@ -25,7 +26,6 @@ export default function PaiementScreen() {
 
     const keyboardPress = (val:string) => {
 
-         console.log(val)
         if (Number(val)==0) {
 
             setAmount("0");
@@ -114,7 +114,7 @@ export default function PaiementScreen() {
              }
              else {
 
-                 if (state.pro_account == null) {
+                 if (state.account == null) {
 
                      Alert.alert(
                          t('Error') || "",
@@ -161,6 +161,8 @@ export default function PaiementScreen() {
         };
 
     }, []);
+
+
 
 
     useEffect(() => {

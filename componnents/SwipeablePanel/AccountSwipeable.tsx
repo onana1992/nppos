@@ -62,7 +62,7 @@ function AccountSwipeable({ accounts, setAccountPanelActive, accountPanelActive 
     const renderRow = ({ item }:any) => {
         return (
 
-            <TouchableOpacity style={state.pro_account?.numCompte == item.numCompte ? styles.accountSelected: styles.account} onPress={() => { selectAccount(item) }}>
+            <TouchableOpacity style={state.account?.numCompte == item.numCompte ? styles.accountSelected: styles.account} onPress={() => { selectAccount(item) }}>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={{ flex: 5 }}>
                         <Text style={{ color: 'black', fontSize: 14, paddingTop: 3, paddingLeft: 5, fontWeight: "bold" }}>{item.nomCompte}</Text>

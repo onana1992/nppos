@@ -16,7 +16,11 @@ export default function MenuScreen() {
     const navigation = useNavigation();
     const state = useSelector<any, any>(state => state.userReducer);
     const [user, setUser] = useState(state.user.user);
+
     //const [saveAccount, setSaveAccount] = useState(state.pro_account);
+    //console.log(state.pro_accounts);
+    //console.log(state.account);
+
     const [proAccounts, setProAccounts] = useState<any[]>([]);
     const [languagePanelActive, setLanguagePanelActive] = useState(false);
     const [accountPanelActive, setAccountPanelActive] = useState(false);
@@ -85,25 +89,36 @@ export default function MenuScreen() {
 
     useEffect(() => {
 
-        let accounts = [...user.comptes];
-
-        let proAccount = accounts.filter((item) => {
-            if (item.type == "professionnel") {
-
-                return true
-               
-            } else {
-
-                return false;
-
-            }       
-            
-        })
-
-        setProAccounts(proAccount)
+        if (state.mode == "pro") {
+           
+            setProAccounts(state.pro_accounts)
+        } else {
+           
+            let tab = [];
+            tab.push(state.account)
+            setProAccounts(tab)
+        } 
          
-
     }, []);
+
+    useEffect(() => {
+
+        console.log(state.account)
+
+        if (state.mode == "pro") {
+            setProAccounts(state.pro_accounts)
+        } else {
+          
+            let tab = [];
+            tab.push(state.account)
+            setProAccounts(tab)
+        }
+
+
+    }, [accountPanelActive]);
+
+
+    
 
 
     return (

@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     View, StatusBar, TextInput, Text, StyleSheet,ScrollView, Keyboard, TouchableOpacity, Dimensions, KeyboardAvoidingView,
     TouchableWithoutFeedback, Alert, Platform
 } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { createDrawerNavigator } from '@react-navigation/drawer'
-import { NavigationContainer } from '@react-navigation/native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { Formik } from 'formik';
@@ -15,6 +13,7 @@ import * as Animatable from 'react-native-animatable';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
+import RadioGroup from 'react-native-radio-buttons-group';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Feather from 'react-native-vector-icons/Feather';
@@ -32,6 +31,7 @@ function SignInScreen() {
     const [data, setData] = React.useState({
         username: '',
         password: '',
+        account:'',
         check_textInputChange: false,
         secureTextEntry: true,
         isValidUser: true,
@@ -46,21 +46,27 @@ function SignInScreen() {
         });
     }
 
+    const [selectedId, setSelectedId] = useState('1');
+    const radioButtons = useMemo(() => ([
+        {
+            id: '1', // acts as primary key, should be unique and non-empty string
+            label: t('professionnal'),
+            value: 'pro',
+            color:'#009387'
+        },
+        {
+            id: '2',
+            label: t('enterprise'),
+            value: 'enterprise',
+            color: '#009387'
+        }
+    ]), []);
 
-    const submit = async (user:any, password:any) => {
+
+    const submit = async (user:any, password:any, account:any) => {
 
         setIsloading(true);
-
-        const  setPin= (data:any)=> {
-            const action1 = { type: "SET_PIN", value: { pin: data.pin } };
-            dispatch(action1)
-        }
-
-
         const  launch = async (url:any, data:any) => {
-
-           
-
             const action2 = { type: "SET_PROFIL_URL", value: { url: url } };
             dispatch(action2);
 
@@ -68,44 +74,117 @@ function SignInScreen() {
             dispatch(action3);
         }
 
-        const userId = "237"+user
+        const userId = "237" + user
 
-        try {
+        if (selectedId == '1') {
 
-            var url = `${baseUrl}user/login/${userId}/${password}`;
-            const response = await axios.get(url);
+            // login comme professionel
+            try {
 
-            console.log(response.data);
+                var url = `${baseUrl}user/login/${userId}/${password}`;
+                const response = await axios.get(url);
 
-            if (response.data.sucess == true) {
 
 
-                if (response.data.data.profil.image_url == null) {
-                    var url_img:any = null
-                } else {
-                    var url_img: any = "https://nanoapp-api.herokuapp.com" + response.data.data.profil.image_url
+                if (response.data.sucess == true) {
+
+
+                    if (response.data.data.profil.image_url == null) {
+                        var url_img: any = null
+                    } else {
+                        var url_img: any = "https://nanoapp-api.herokuapp.com" + response.data.data.profil.image_url
+                    }
+
+
+
+                    let proAccounts = response.data.data.comptes.filter((item) => {
+                        if (item.type == "professionnel") {
+
+                            return true
+
+                        } else {
+
+                            return false;
+
+                        }
+
+                    })
+
+                    launch(url_img, response.data.data)
+                    const action4 = { type: "SET_PRO_ACCOUNT", value: proAccounts };
+                    const action5 = { type: "SET_MODE", value: "pro" };
+                    dispatch(action4);
+                    dispatch(action5);
+
+                }
+                else {
+
+                    Toast.show({
+                        type: 'failure',
+                        props: { message: t('failureAuth') },
+                        position: 'bottom'
+                    });
+
                 }
 
-               launch(url_img, response.data.data)
+                setIsloading(false);
 
-            }
-            else {
+            } catch (error) {
 
-                Toast.show({
-                    type: 'failure',
-                    props: { message: t('failureAuth') },
-                    position: 'bottom'
-                });
-
+                console.log(error)
+                setIsloading(false);
             }
 
-            setIsloading(false);
+        } else {
 
-        } catch (error) {
+            // login comme entreprise
+            try {
 
-            console.log(error)
-            setIsloading(false);
+                var url = `${baseUrl}enterprise/user/login/${userId}/${password}/${account}`;
+                const response = await axios.get(url);
+
+               
+
+                if (response.data.sucess == true) {
+
+                    console.log(response.data.data);
+
+                    if (response.data.data.user.profil.image_url == null) {
+                        var url_img: any = null
+                    } else {
+                        var url_img: any = "https://nanoapp-api.herokuapp.com" + response.data.data.user.profil.image_url
+                    }
+
+
+                    launch(url_img, response.data.data.user)
+                    const action4 = { type: "SET_ACCOUNT", value: response.data.data.compte};
+                    const action5 = { type: "SET_MODE", value: "entreprise" };
+                    dispatch(action4);
+                    dispatch(action5);
+
+                }
+                else {
+
+                    Toast.show({
+                        type: 'failure',
+                        props: { message: t('failureAuth') },
+                        position: 'bottom'
+                    });
+
+                }
+
+                setIsloading(false);
+
+            } catch (error) {
+
+                console.log(error)
+                setIsloading(false);
+            }
+
+
         }
+
+        
 
     }
 
@@ -145,7 +224,7 @@ function SignInScreen() {
             >
 
                 <ScrollView>
-                    <View style={{ marginTop:10 }}>
+                    <View style={{ marginTop:0 }}>
                         <Text style={styles.text_header2} >{t('welcomeback')}</Text>
                     </View>
 
@@ -153,11 +232,21 @@ function SignInScreen() {
                         <Text style={styles.text_tip} >{t('letsignin')}</Text>
                     </View>
 
+                    <View style={{ marginLeft: 0, paddingLeft: 0, paddingBottom: 15, justifyContent: "center", alignItems:"center" }}>
+                        <RadioGroup
+                            radioButtons={radioButtons}
+                            onPress={setSelectedId}
+                            selectedId={selectedId}
+                            layout="row"
+                            containerStyle={{color:"red"} }
+                        />
+                    </View>
+
                     <Formik
 
-                        initialValues={{ username: "", password: "" }}
+                        initialValues={{ username: "", password: "", account:"" }}
                         onSubmit={(values, { setSubmitting }) => {
-                            submit(values.username, values.password);
+                            submit(values.username, values.password,values.account);
                         }}
 
                         validate={values => {
@@ -169,6 +258,11 @@ function SignInScreen() {
                             if (!values.password) {
                                 errors.password = t('requiredValue')
                             }
+
+                            if (!values.account && selectedId=="2" ) {
+                                errors.account = t('requiredValue')
+                            }
+
                             return errors;
                         }}
                     >
@@ -262,6 +356,44 @@ function SignInScreen() {
 
                                         </View>
 
+                                        {selectedId == "2" &&
+                                            <View style={{ marginTop: 35 }}>
+                                                <Text style={styles.text_footer}>{t('accountnumber')} *</Text>
+                                                <View style={styles.action}>
+
+                                                    <Feather
+                                                        name="phone"
+                                                        color="#05375a"
+                                                        size={18}
+                                                    />
+
+
+                                                    <TextInput
+                                                        placeholder={t('entrepriseaccountnumber')}
+                                                        style={styles.textInput}
+                                                        autoCapitalize="none"
+                                                        name="account"
+                                                        onChangeText={handleChange('account')}
+                                                        onBlur={handleBlur('account')}
+                                                        
+                                                        value={values.account}
+                                                    />
+
+
+                                                </View>
+
+                                                {touched.account && errors.account &&
+                                                    <Animatable.View animation="fadeInLeft" duration={500}>
+                                                        <Text style={styles.errorMsg}> {touched.account && errors.account} </Text>
+                                                    </Animatable.View>
+                                                }
+
+                                            </View>
+                                    
+                                    
+                                         }
+                                        
+
                     
                                         <View style={styles.button}>
 
@@ -300,30 +432,35 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#009387'
     },
+
     header: {
         flex: 1,
         justifyContent: 'flex-end',
         paddingHorizontal: 20,
-        paddingBottom: 50
+        paddingBottom: 30
     },
+
     footer: {
-        flex: Platform.OS === 'ios' ? 6 : 6,
+        flex: Platform.OS === 'ios' ? 7 : 7,
         backgroundColor: '#fff',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 30
     },
+
     text_header: {
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 30
     },
+
     text_footer: {
         color: '#05375a',
         fontSize: 16,
 
     },
+
     action: {
         flexDirection: 'row',
         marginTop: 10,
@@ -331,6 +468,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f2f2f2',
         paddingBottom: 0
     },
+
     textInput: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,

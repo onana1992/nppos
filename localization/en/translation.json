@@ -47,5 +47,13 @@
   "success": "succès",
   "info": "Info",
   "failure": "Échec",
-  "failureAuth": "Invalid username or password"
+  "failureAuth": "Invalid username or password",
+  "enterprise": "Enterprise",
+  "professionnal": "Professionnal",
+  "accountnumber": "Account number",
+  "entrepriseaccountnumber": "Entreprise account number",
+  "paymentissuedto": "Payment issued to "
+
+
+
 }

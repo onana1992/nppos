@@ -25,14 +25,17 @@ import { lauchTransaction } from '../Services/services';
 function PaiementValidationScreen() {
 
 	
+	
 	const state = useSelector<any, any>(state => state.userReducer);
-	const [saveAccount, setSaveAccount] = useState(state.pro_account);
+	const [saveAccount, setSaveAccount] = useState(state.account);
+	console.log(state.user);
 	const [user, setUser] = useState(state.user.user);
 	const { amount } = useRoute<any>().params;
 	const { t } = useTranslation();
 	const navigation = useNavigation();
 
-	
+
+	console.log(user.telephone)
 
 	const { width, height } = Dimensions.get('window');
 	const [profilReceiver, setProfilReceiver] = useState(null);
@@ -221,9 +224,9 @@ function PaiementValidationScreen() {
 		console.log("compte recepteur", saveAccount);*/
 
 		setInprocess(true);
-
+		/*saveAccount.numCompte.slice(0, 12)*/
 		let userNip = nip == "" ? "xxxx":nip
-		lauchTransaction(senderPhone, saveAccount.numCompte.slice(0, 12), cashierPhone, senderAccount, saveAccount.numCompte, amount, "paiement", userNip).then(
+		lauchTransaction(senderPhone, cashierPhone , cashierPhone, senderAccount, saveAccount.numCompte, amount, "paiement", userNip).then(
 			(response) => {
 
 				console.log(response.data);
@@ -455,12 +458,15 @@ function PaiementValidationScreen() {
 					</View>
 				}
 
-
 			</View>
 
 
-			<View style={{ flex: 2, alignItems:"center", justifyContent:"flex-end" }}>
-				<Text style={{ padding: 20, fontSize: 16, color: Colors.header, fontWeight: "bold" }}>Nano Pay</Text>
+			<View style={{ flex: 2, alignItems: "center", justifyContent: "flex-end", padding:20 }}>
+				{ state.mode == "entreprise" &&
+					<Text style={{ fontSize: 16, color: "black" }}> {t('paymentissuedto')} <Text style={{ fontWeight: "bold", color: Colors.header } }>{state.account.enterprise.nom}</Text></Text>
+				}
+
+				<Text style={{ fontSize: 16, color: Colors.header, fontWeight: "bold" }}> Nano Pay </Text>
 			</View>
 		
 				

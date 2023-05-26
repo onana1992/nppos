@@ -101,7 +101,7 @@ function RootNavigator() {
                           name="PaiementValidationScreen"
                           component={PaiementValidationScreen}
                           options={{
-                              title: t('payment') || "dd",
+                              title: t('payment') || "",
                               headerTintColor: '#fff',
                               headerStyle: {
                                   backgroundColor: Colors.header
@@ -110,12 +110,11 @@ function RootNavigator() {
                       />
 
                       
-
                       <Stack.Screen
                           name="HistoryScreen"
                           component={HistoryScreen}
                           options={{
-                              title: t('payment') || "dd",
+                              title: t('TransactionHistory') || "",
                               headerTintColor: '#fff',
                               headerStyle: {
                                   backgroundColor: Colors.header,

@@ -48,6 +48,11 @@
   "failure": "Failure",
   "signin": "Se connecter",
   "processing": "Traitement en cours ...",
-  "processing1": "Traitement en cours ..."
+  "processing1": "Traitement en cours ...",
+  "enterprise": "Entreprise",
+  "professionnal": "Professionnel",
+  "accountnumber": "Numéro de compte",
+  "entrepriseaccountnumber": "Numéro de compte de l'entreprise",
+  "paymentissuedto": "Paiement émis à "
 
 }
